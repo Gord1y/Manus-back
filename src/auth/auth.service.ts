@@ -6,6 +6,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { User } from '@prisma/client'
 import { hash, verify } from 'argon2'
 import { PrismaService } from 'src/prisma.service'
 import { AuthDto, RegisterDto } from '../dto/auth.dto'
@@ -34,7 +35,7 @@ export class AuthService {
 
 		const tokens = await this.issueTokens(user.id)
 		return {
-			user,
+			user: this.returnUserFields(user),
 			...tokens
 		}
 	}
@@ -52,7 +53,7 @@ export class AuthService {
 		}
 		const tokens = await this.issueTokens(user.id)
 		return {
-			user,
+			user: this.returnUserFields(user),
 			...tokens
 		}
 	}
@@ -69,13 +70,21 @@ export class AuthService {
 			if (!user) throw new NotFoundException('User not found')
 			const tokens = await this.issueTokens(user.id)
 			return {
-				user,
+				user: this.returnUserFields(user),
 				...tokens
 			}
 		} catch (err) {
 			throw new HttpException(err.message, 401, {
 				cause: new Error(err)
 			})
+		}
+	}
+	private returnUserFields(user: User) {
+		return {
+			id: user.id,
+			name: user.name,
+			surname: user.surname,
+			email: user.email
 		}
 	}
 
