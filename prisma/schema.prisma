@@ -3,14 +3,30 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String
-  surname String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  name     String
+  surname  String
   password String
+}
+
+model Recipe {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  name         String       @unique
+  slug         String       @unique
+  description  String       @default("description")
+  ingredients  Ingredient[]
+  instructions String       @default("instructions")
+  image        String       @default("image")
+  createdAt    DateTime     @default(now())
+}
+
+type Ingredient {
+  name  String
+  count String
 }

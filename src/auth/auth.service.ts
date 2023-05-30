@@ -61,6 +61,7 @@ export class AuthService {
 	async getNewTokens(refreshToken: string) {
 		try {
 			const result = await this.JWT.verifyAsync(refreshToken)
+
 			if (!result) throw new UnauthorizedException('Invalid refresh token')
 			const user = await this.prisma.user.findUnique({
 				where: {
@@ -88,7 +89,7 @@ export class AuthService {
 		}
 	}
 
-	private async issueTokens(userId: number) {
+	private async issueTokens(userId: string) {
 		const data = { id: userId }
 		const accessToken = this.JWT.sign(data, {
 			expiresIn: '1h'

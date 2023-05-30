@@ -7,10 +7,7 @@ import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(
-		private readonly configService: ConfigService,
-		private prisma: PrismaService
-	) {
+	constructor(configService: ConfigService, private prisma: PrismaService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: true,
@@ -18,9 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		})
 	}
 	async validate({ id }: Pick<User, 'id'>) {
+		if (!id) return null
 		return this.prisma.user.findUnique({
 			where: {
-				id: +id
+				id: id
 			}
 		})
 	}
