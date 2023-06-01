@@ -17,13 +17,13 @@ model User {
 
 model Recipe {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt    DateTime     @default(now())
   name         String       @unique
   slug         String       @unique
-  description  String       @default("description")
+  description  String
   ingredients  Ingredient[]
-  instructions String       @default("instructions")
-  image        String       @default("image")
-  createdAt    DateTime     @default(now())
+  instructions String?
+  image        String?
 }
 
 type Ingredient {
