@@ -28,3 +28,27 @@ export class Ingredient {
 	@IsString()
 	count: string
 }
+
+export class IRecipeUpdate {
+	@IsString()
+	id: string
+
+	@IsString()
+	name: string
+
+	@IsString()
+	slug: string
+
+	@IsString()
+	description: string
+
+	@IsString()
+	@IsOptional()
+	instructions?: string
+
+	@IsString()
+	@IsOptional()
+	image?: string
+
+	ingredients?: Ingredient[]
+}

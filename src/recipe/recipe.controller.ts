@@ -10,10 +10,10 @@ import {
 	UsePipes,
 	ValidationPipe
 } from '@nestjs/common'
-import { Auth } from 'src/decorators/auth.decorator'
-import { IRecipe } from 'src/dto/recipe.dto'
-import { RecipeService } from './recipe.service'
 import { Recipe } from '@prisma/client'
+import { Auth } from 'src/decorators/auth.decorator'
+import { IRecipe, IRecipeUpdate } from 'src/dto/recipe.dto'
+import { RecipeService } from './recipe.service'
 
 @Controller('recipe')
 export class RecipeController {
@@ -38,7 +38,7 @@ export class RecipeController {
 	@HttpCode(200)
 	@Put()
 	@Auth()
-	async UpdateRecipe(@Body() dto: Recipe) {
+	async UpdateRecipe(@Body() dto: IRecipeUpdate) {
 		return await this.recipeService.UpdateRecipe(dto)
 	}
 

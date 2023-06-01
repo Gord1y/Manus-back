@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { Recipe } from '@prisma/client'
-import { IRecipe } from 'src/dto/recipe.dto'
+import { IRecipe, IRecipeUpdate } from 'src/dto/recipe.dto'
 import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
@@ -33,13 +32,43 @@ export class RecipeService {
 		})
 	}
 
-	async UpdateRecipe(dto: Recipe) {
+	async UpdateRecipe(dto: IRecipeUpdate) {
+		const recipe = await this.prisma.recipe.findUnique({
+			where: {
+				id: dto.id
+			}
+		})
+		if (!recipe) throw new BadRequestException('Recipe does not exist')
+
+		if (recipe.name !== dto.name) {
+			const name = await this.prisma.recipe.findUnique({
+				where: {
+					name: dto.name
+				}
+			})
+			if (name) throw new BadRequestException('Recipe name already exists')
+		}
+
+		if (recipe.slug !== dto.slug) {
+			const slug = await this.prisma.recipe.findUnique({
+				where: {
+					slug: dto.slug
+				}
+			})
+			if (slug) throw new BadRequestException('Recipe slug already exists')
+		}
+
 		return await this.prisma.recipe.update({
 			where: {
 				id: dto.id
 			},
 			data: {
-				...dto
+				name: dto.name,
+				slug: dto.slug,
+				description: dto.description,
+				instructions: dto.instructions,
+				image: dto.image,
+				ingredients: dto.ingredients
 			}
 		})
 	}
