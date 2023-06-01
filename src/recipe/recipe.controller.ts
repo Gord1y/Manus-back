@@ -18,9 +18,7 @@ import { RecipeService } from './recipe.service'
 export class RecipeController {
 	constructor(private readonly recipeService: RecipeService) {}
 
-	@HttpCode(200)
 	@Get()
-	@Auth()
 	async GetAllRecipes() {
 		return await this.recipeService.GetAllRecipes()
 	}
@@ -49,9 +47,8 @@ export class RecipeController {
 		return await this.recipeService.DeleteRecipe(dto.id)
 	}
 
-	@Auth()
 	@Get('/:slug')
-	async getUser(@Param('slug') slug: string) {
+	async getBySlug(@Param('slug') slug: string) {
 		return await this.recipeService.getBySlug(slug)
 	}
 }
