@@ -10,9 +10,8 @@ import {
 	UsePipes,
 	ValidationPipe
 } from '@nestjs/common'
-import { Recipe } from '@prisma/client'
 import { Auth } from 'src/decorators/auth.decorator'
-import { IRecipe, IRecipeUpdate } from 'src/dto/recipe.dto'
+import { IRecipe, IRecipeDelete, IRecipeUpdate } from 'src/dto/recipe.dto'
 import { RecipeService } from './recipe.service'
 
 @Controller('recipe')
@@ -42,10 +41,11 @@ export class RecipeController {
 		return await this.recipeService.UpdateRecipe(dto)
 	}
 
+	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Delete()
 	@Auth()
-	async DeleteRecipe(@Body() dto: Recipe) {
+	async DeleteRecipe(@Body() dto: IRecipeDelete) {
 		return await this.recipeService.DeleteRecipe(dto.id)
 	}
 

@@ -52,3 +52,8 @@ export class IRecipeUpdate {
 
 	ingredients?: Ingredient[]
 }
+
+export class IRecipeDelete {
+	@IsString()
+	id: string
+}
