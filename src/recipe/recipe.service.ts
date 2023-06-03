@@ -1,13 +1,41 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { IRecipe, IRecipeUpdate } from 'src/dto/recipe.dto'
+import { IRecipe } from 'src/dto/recipe.dto'
 import { PrismaService } from 'src/prisma.service'
+import { IQuery } from './query.dto'
 
 @Injectable()
 export class RecipeService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async GetAllRecipes() {
-		return await this.prisma.recipe.findMany({})
+	async GetRecipes(query: IQuery) {
+		return await this.prisma.recipe.findMany({
+			where: {
+				OR: [
+					{
+						name: {
+							contains: query.find
+						}
+					},
+					{
+						slug: {
+							contains: query.find
+						}
+					},
+					{
+						ingredients: {
+							some: {
+								name: {
+									contains: query.find
+								}
+							}
+						}
+					}
+				]
+			},
+
+			skip: query.skip ? +query.skip : 0,
+			take: query.take ? +query.take : 1
+		})
 	}
 
 	async CreateRecipe(dto: IRecipe) {
@@ -32,10 +60,10 @@ export class RecipeService {
 		})
 	}
 
-	async UpdateRecipe(dto: IRecipeUpdate) {
+	async UpdateRecipe(id: string, dto: IRecipe) {
 		const recipe = await this.prisma.recipe.findUnique({
 			where: {
-				id: dto.id
+				id: id
 			}
 		})
 		if (!recipe) throw new BadRequestException('Recipe does not exist')
@@ -60,15 +88,10 @@ export class RecipeService {
 
 		return await this.prisma.recipe.update({
 			where: {
-				id: dto.id
+				id: id
 			},
 			data: {
-				name: dto.name,
-				slug: dto.slug,
-				description: dto.description,
-				instructions: dto.instructions,
-				image: dto.image,
-				ingredients: dto.ingredients
+				...dto
 			}
 		})
 	}
