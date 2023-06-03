@@ -17,16 +17,26 @@ model User {
 
 model Recipe {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt    DateTime     @default(now())
+  createdAt    DateTime     @default(now()) @map("created_at")
   name         String       @unique
   slug         String       @unique
   description  String
   ingredients  Ingredient[]
   instructions String?
   image        String?
+  categoryId   String?      @map("category_id") @db.ObjectId
+  category     Category?    @relation(fields: [categoryId], references: [id])
 }
 
 type Ingredient {
   name  String
   count String
+}
+
+model Category {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  slug String @unique
+
+  Recipe Recipe[]
 }
