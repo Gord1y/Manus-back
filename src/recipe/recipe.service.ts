@@ -34,7 +34,7 @@ export class RecipeService {
 			},
 
 			skip: query.skip ? +query.skip : 0,
-			take: query.take ? +query.take : 1
+			take: query.take ? +query.take : 20
 		})
 	}
 
