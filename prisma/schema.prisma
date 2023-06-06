@@ -24,8 +24,9 @@ model Recipe {
   ingredients  Ingredient[]
   instructions String?
   image        String?
-  categoryId   String       @map("category_id") @db.ObjectId
-  category     Category     @relation(fields: [categoryId], references: [id])
+
+  Category     Category @relation(fields: [categorySlug], references: [slug])
+  categorySlug String   @map("category_slug")
 }
 
 type Ingredient {
