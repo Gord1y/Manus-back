@@ -5,10 +5,10 @@ export class IRecipe {
 	name: string
 
 	@IsString()
-	slug: string
+	description: string
 
 	@IsString()
-	description: string
+	categorySlug: string
 
 	@IsString()
 	@IsOptional()
@@ -18,11 +18,8 @@ export class IRecipe {
 	@IsOptional()
 	image?: string
 
-	ingredients?: Ingredient[]
-
 	@IsOptional()
-	@IsString()
-	categoryId?: string
+	ingredients?: Ingredient[]
 }
 
 export class Ingredient {

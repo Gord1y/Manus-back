@@ -25,7 +25,7 @@ model Recipe {
   instructions String?
   image        String?
 
-  Category     Category @relation(fields: [categorySlug], references: [slug])
+  category     Category @relation(fields: [categorySlug], references: [slug])
   categorySlug String   @map("category_slug")
 }
 

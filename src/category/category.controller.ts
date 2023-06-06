@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common'
 import { Auth } from 'src/decorators/auth.decorator'
 import { ICategory } from 'src/dto/category.dto'
-import { IQuery } from 'src/recipe/query.dto'
+import { IQuery } from 'src/dto/query.dto'
 import { CategoryService } from './category.service'
 
 @Controller('category')
@@ -24,11 +24,10 @@ export class CategoryController {
 		return await this.categoryService.GetCategory(query)
 	}
 
-	@UsePipes(new ValidationPipe())
 	@Post()
 	@Auth()
-	async CreateCategory(@Body() dto: ICategory) {
-		return await this.categoryService.CreateCategory(dto)
+	async CreateCategory() {
+		return await this.categoryService.CreateCategory()
 	}
 
 	@UsePipes(new ValidationPipe())

@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
+import { IQuery } from 'src/dto/query.dto'
 import { IRecipe } from 'src/dto/recipe.dto'
 import { PrismaService } from 'src/prisma.service'
-import { IQuery } from './query.dto'
+import { slugify } from 'src/services/slugify'
 
 @Injectable()
 export class RecipeService {
@@ -39,59 +40,116 @@ export class RecipeService {
 	}
 
 	async CreateRecipe(dto: IRecipe) {
-		const name = await this.prisma.recipe.findUnique({
+		const {
+			name,
+			description,
+			categorySlug,
+			instructions,
+			image,
+			ingredients
+		} = dto
+		const recipeName = await this.prisma.recipe.findUnique({
 			where: {
-				name: dto.name
+				name
 			}
 		})
-		if (name) throw new BadRequestException('Recipe name already exists')
+		if (recipeName) throw new BadRequestException('Recipe name already exists')
 
-		const recipe = await this.prisma.recipe.findUnique({
+		const slug = slugify(name)
+		const recipeSlug = await this.prisma.recipe.findUnique({
 			where: {
-				slug: dto.slug
+				slug
 			}
 		})
-		if (recipe) throw new BadRequestException('Recipe slug already exists')
+		if (recipeSlug) throw new BadRequestException('Recipe slug already exists')
+
+		const recipeCategory = await this.prisma.category.findUnique({
+			where: {
+				slug: categorySlug
+			}
+		})
+		if (!recipeCategory)
+			throw new BadRequestException('Category does not exist')
 
 		return await this.prisma.recipe.create({
 			data: {
-				...dto
+				name,
+				description,
+				slug,
+				category: {
+					connect: {
+						slug: categorySlug
+					}
+				},
+				instructions,
+				image,
+				...ingredients
 			}
 		})
 	}
 
 	async UpdateRecipe(id: string, dto: IRecipe) {
+		const {
+			name,
+			description,
+			categorySlug,
+			instructions,
+			image,
+			ingredients
+		} = dto
 		const recipe = await this.prisma.recipe.findUnique({
 			where: {
-				id: id
+				id
 			}
 		})
 		if (!recipe) throw new BadRequestException('Recipe does not exist')
 
-		if (recipe.name !== dto.name) {
-			const name = await this.prisma.recipe.findUnique({
+		if (recipe.name !== name) {
+			const recipeName = await this.prisma.recipe.findUnique({
 				where: {
-					name: dto.name
+					name
 				}
 			})
-			if (name) throw new BadRequestException('Recipe name already exists')
+			if (recipeName)
+				throw new BadRequestException('Recipe name already exists')
 		}
 
-		if (recipe.slug !== dto.slug) {
-			const slug = await this.prisma.recipe.findUnique({
+		const slug = slugify(name)
+
+		if (recipe.slug !== slug) {
+			const recipeSlug = await this.prisma.recipe.findUnique({
 				where: {
-					slug: dto.slug
+					slug
 				}
 			})
-			if (slug) throw new BadRequestException('Recipe slug already exists')
+			if (recipeSlug)
+				throw new BadRequestException('Recipe slug already exists')
 		}
+
+		const recipeCategory = await this.prisma.category.findUnique({
+			where: {
+				slug: categorySlug
+			}
+		})
+		if (!recipeCategory)
+			throw new BadRequestException('Category does not exist')
 
 		return await this.prisma.recipe.update({
 			where: {
-				id: id
+				id
 			},
 			data: {
-				...dto
+				name,
+				description,
+				slug,
+				category: {
+					connect: {
+						slug: categorySlug
+					}
+				},
+				instructions,
+				image,
+				...ingredients
 			}
 		})
 	}

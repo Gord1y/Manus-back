@@ -1,7 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ICategory } from 'src/dto/category.dto'
+import { IQuery } from 'src/dto/query.dto'
 import { PrismaService } from 'src/prisma.service'
-import { IQuery } from 'src/recipe/query.dto'
+import { slugify } from 'src/services/slugify'
 
 @Injectable()
 export class CategoryService {
@@ -17,52 +18,43 @@ export class CategoryService {
 		})
 	}
 
-	async CreateCategory(dto: ICategory) {
-		const slug = await this.prisma.category.findUnique({
-			where: {
-				slug: dto.slug
-			}
-		})
-		if (slug) throw new BadRequestException('Category slug already exists')
-
-		const name = await this.prisma.category.findUnique({
-			where: {
-				name: dto.name
-			}
-		})
-		if (name) throw new BadRequestException('Category name already exists')
-
+	async CreateCategory() {
 		return await this.prisma.category.create({
 			data: {
-				...dto
+				name: '',
+				slug: ''
 			}
 		})
 	}
 
 	async UpdateCategory(id: string, dto: ICategory) {
-		const Category = await this.prisma.category.findUnique({
+		const { name } = dto
+		const slug = slugify(dto.name)
+		const category = await this.prisma.category.findUnique({
 			where: {
-				id: id
+				id
 			}
 		})
-		if (!Category) throw new BadRequestException('Category does not exist')
+		if (!category) throw new BadRequestException('Category does not exist')
 
-		if (Category.name !== dto.name) {
-			const name = await this.prisma.category.findUnique({
+		if (category.name !== name) {
+			const categoryName = await this.prisma.category.findUnique({
 				where: {
-					name: dto.name
+					name
 				}
 			})
-			if (name) throw new BadRequestException('Category name already exists')
+			if (categoryName)
+				throw new BadRequestException('Category name already exists')
 		}
 
-		if (Category.slug !== dto.slug) {
-			const slug = await this.prisma.category.findUnique({
+		if (category.slug !== slug) {
+			const categorySlug = await this.prisma.category.findUnique({
 				where: {
-					slug: dto.slug
+					slug
 				}
 			})
-			if (slug) throw new BadRequestException('Category slug already exists')
+			if (categorySlug)
+				throw new BadRequestException('Category slug already exists')
 		}
 
 		return await this.prisma.category.update({
@@ -70,7 +62,8 @@ export class CategoryService {
 				id: id
 			},
 			data: {
-				...dto
+				name,
+				slug
 			}
 		})
 	}

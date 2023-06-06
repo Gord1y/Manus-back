@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common'
 import { Auth } from 'src/decorators/auth.decorator'
 import { IRecipe } from 'src/dto/recipe.dto'
-import { IQuery } from './query.dto'
+import { IQuery } from '../dto/query.dto'
 import { RecipeService } from './recipe.service'
 
 @Controller('recipe')
