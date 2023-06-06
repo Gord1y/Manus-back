@@ -9,22 +9,11 @@ export class CategoryService {
 
 	async GetCategory(query: IQuery) {
 		return await this.prisma.category.findMany({
+			skip: query.skip ? query.skip : 0,
+			take: query.take ? query.take : 20,
 			where: {
-				OR: [
-					{
-						name: {
-							contains: query.find
-						}
-					},
-					{
-						slug: {
-							contains: query.find
-						}
-					}
-				]
-			},
-			skip: query.skip ? +query.skip : 0,
-			take: query.take ? +query.take : 10
+				name: { contains: query.find }
+			}
 		})
 	}
 
