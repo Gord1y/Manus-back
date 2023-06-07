@@ -139,10 +139,14 @@ export class RecipeService {
 	}
 
 	async getBySlug(slug: string) {
-		return await this.prisma.recipe.findUnique({
+		const recipe = await this.prisma.recipe.findUnique({
 			where: {
 				slug
 			}
 		})
+
+		if (!recipe) throw new BadRequestException('Recipe does not exist')
+
+		return recipe
 	}
 }
