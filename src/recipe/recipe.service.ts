@@ -10,30 +10,6 @@ export class RecipeService {
 
 	async GetRecipes(query: IQuery) {
 		return await this.prisma.recipe.findMany({
-			where: {
-				OR: [
-					{
-						name: {
-							contains: query.find
-						}
-					},
-					{
-						slug: {
-							contains: query.find
-						}
-					},
-					{
-						ingredients: {
-							some: {
-								name: {
-									contains: query.find
-								}
-							}
-						}
-					}
-				]
-			},
-
 			skip: query.skip ? +query.skip : 0,
 			take: query.take ? +query.take : 20
 		})
