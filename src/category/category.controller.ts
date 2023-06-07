@@ -19,6 +19,11 @@ import { CategoryService } from './category.service'
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
 
+	@Get('/all')
+	async GetAllCategories() {
+		return await this.categoryService.GetAllCategories()
+	}
+
 	@Get()
 	async GetCategory(@Query() query: IQuery) {
 		return await this.categoryService.GetCategory(query)

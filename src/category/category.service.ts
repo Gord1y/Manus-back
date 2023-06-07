@@ -8,6 +8,10 @@ import { slugify } from 'src/services/slugify'
 export class CategoryService {
 	constructor(private readonly prisma: PrismaService) {}
 
+	async GetAllCategories() {
+		return await this.prisma.category.findMany()
+	}
+
 	async GetCategory(query: IQuery) {
 		return await this.prisma.category.findMany({
 			skip: query.skip ? query.skip : 0,
