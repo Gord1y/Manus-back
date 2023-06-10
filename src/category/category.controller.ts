@@ -25,14 +25,15 @@ export class CategoryController {
 	}
 
 	@Get()
-	async GetCategory(@Query() query: IQuery) {
-		return await this.categoryService.GetCategory(query)
+	async GetCategories(@Query() query: IQuery) {
+		return await this.categoryService.GetCategories(query)
 	}
 
 	@Post()
+	@UsePipes(new ValidationPipe())
 	@Auth()
-	async CreateCategory() {
-		return await this.categoryService.CreateCategory()
+	async CreateCategory(@Body() dto: ICategory) {
+		return await this.categoryService.CreateCategory(dto)
 	}
 
 	@UsePipes(new ValidationPipe())
@@ -50,7 +51,7 @@ export class CategoryController {
 	}
 
 	@Get('/:slug')
-	async getBySlug(@Param('slug') slug: string) {
-		return await this.categoryService.getBySlug(slug)
+	async getBySlug(@Query() query: IQuery, @Param('slug') slug: string) {
+		return await this.categoryService.getBySlug(slug, query)
 	}
 }

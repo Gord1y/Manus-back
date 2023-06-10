@@ -12,21 +12,47 @@ export class CategoryService {
 		return await this.prisma.category.findMany()
 	}
 
-	async GetCategory(query: IQuery) {
+	async GetCategories(query: IQuery) {
 		return await this.prisma.category.findMany({
-			skip: query.skip ? query.skip : 0,
-			take: query.take ? query.take : 20,
+			skip: query.skip ? Number(query.skip) : 0,
+			take: query.take ? Number(query.take) : 20,
 			where: {
-				name: { contains: query.find }
+				OR: [
+					{
+						name: { contains: query.find ? query.find : '' }
+					},
+					{
+						slug: { contains: query.find ? query.find : '' }
+					}
+				]
 			}
 		})
 	}
 
-	async CreateCategory() {
+	async CreateCategory(dto: ICategory) {
+		const { name } = dto
+		const slug = slugify(dto.name)
+
+		const categoryName = await this.prisma.category.findUnique({
+			where: {
+				name
+			}
+		})
+		if (categoryName)
+			throw new BadRequestException('Category name already exists')
+
+		const categorySlug = await this.prisma.category.findUnique({
+			where: {
+				slug
+			}
+		})
+		if (categorySlug)
+			throw new BadRequestException('Category slug already exists')
+
 		return await this.prisma.category.create({
 			data: {
-				name: '',
-				slug: ''
+				name: name,
+				slug: slugify(name)
 			}
 		})
 	}
@@ -80,11 +106,41 @@ export class CategoryService {
 		})
 	}
 
-	async getBySlug(slug: string) {
-		return await this.prisma.category.findUnique({
+	async getBySlug(slug: string, query: IQuery) {
+		return await this.prisma.recipe.findMany({
 			where: {
-				slug
-			}
+				AND: [
+					{
+						categorySlug: slug
+					},
+					{
+						OR: [
+							{
+								name: {
+									contains: query.find ? query.find : ''
+								}
+							},
+							{
+								description: {
+									contains: query.find ? query.find : ''
+								}
+							},
+							{
+								instructions: {
+									contains: query.find ? query.find : ''
+								}
+							},
+							{
+								slug: {
+									contains: query.find ? query.find : ''
+								}
+							}
+						]
+					}
+				]
+			},
+			skip: query.skip ? Number(query.skip) : 0,
+			take: query.take ? Number(query.take) : 20
 		})
 	}
 }
