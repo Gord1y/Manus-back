@@ -20,35 +20,35 @@ import { RecipeService } from './recipe.service'
 export class RecipeController {
 	constructor(private readonly recipeService: RecipeService) {}
 
-	@Get("/all")
+	@Get('/all')
 	async GetAllRecipes() {
 		return await this.recipeService.GetAllRecipes()
 	}
-	
+
 	@Get()
 	async GetRecipes(@Query() query: IQuery) {
 		return await this.recipeService.GetRecipes(query)
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
 	@Post()
+	@HttpCode(200)
+	@UsePipes(new ValidationPipe())
 	@Auth()
 	async CreateRecipe(@Body() dto: IRecipe) {
 		return await this.recipeService.CreateRecipe(dto)
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
 	@Put('/:id')
+	@HttpCode(200)
+	@UsePipes(new ValidationPipe())
 	@Auth()
 	async UpdateRecipe(@Param('id') id: string, @Body() dto: IRecipe) {
 		return await this.recipeService.UpdateRecipe(id, dto)
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
 	@Delete('/:id')
+	@HttpCode(200)
+	@UsePipes(new ValidationPipe())
 	@Auth()
 	async DeleteRecipe(@Param('id') id: string) {
 		return await this.recipeService.DeleteRecipe(id)

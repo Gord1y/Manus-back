@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpCode,
 	Param,
 	Post,
 	Put,
@@ -30,21 +31,24 @@ export class CategoryController {
 	}
 
 	@Post()
+	@HttpCode(200)
 	@UsePipes(new ValidationPipe())
 	@Auth()
 	async CreateCategory(@Body() dto: ICategory) {
 		return await this.categoryService.CreateCategory(dto)
 	}
 
-	@UsePipes(new ValidationPipe())
 	@Put('/:id')
+	@HttpCode(200)
+	@UsePipes(new ValidationPipe())
 	@Auth()
 	async UpdateCategory(@Param('id') id: string, @Body() dto: ICategory) {
 		return await this.categoryService.UpdateCategory(id, dto)
 	}
 
-	@UsePipes(new ValidationPipe())
 	@Delete('/:id')
+	@HttpCode(200)
+	@UsePipes(new ValidationPipe())
 	@Auth()
 	async DeleteCategory(@Param('id') id: string) {
 		return await this.categoryService.DeleteCategory(id)
