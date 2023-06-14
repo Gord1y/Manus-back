@@ -20,6 +20,11 @@ import { RecipeService } from './recipe.service'
 export class RecipeController {
 	constructor(private readonly recipeService: RecipeService) {}
 
+	@Get("/all")
+	async GetAllRecipes() {
+		return await this.recipeService.GetAllRecipes()
+	}
+	
 	@Get()
 	async GetRecipes(@Query() query: IQuery) {
 		return await this.recipeService.GetRecipes(query)

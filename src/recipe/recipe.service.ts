@@ -8,6 +8,10 @@ import { slugify } from 'src/services/slugify'
 export class RecipeService {
 	constructor(private readonly prisma: PrismaService) {}
 
+	async GetAllRecipes() {
+		return await this.prisma.recipe.findMany()
+	}
+
 	async GetRecipes(query: IQuery) {
 		return await this.prisma.recipe.findMany({
 			where: {
