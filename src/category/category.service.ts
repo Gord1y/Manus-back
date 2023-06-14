@@ -31,7 +31,6 @@ export class CategoryService {
 
 	async CreateCategory(dto: ICategory) {
 		const { name } = dto
-		const slug = slugify(dto.name)
 
 		const categoryName = await this.prisma.category.findUnique({
 			where: {
@@ -40,6 +39,8 @@ export class CategoryService {
 		})
 		if (categoryName)
 			throw new BadRequestException('Category name already exists')
+
+		const slug = slugify(dto.name)
 
 		const categorySlug = await this.prisma.category.findUnique({
 			where: {
@@ -59,7 +60,6 @@ export class CategoryService {
 
 	async UpdateCategory(id: string, dto: ICategory) {
 		const { name } = dto
-		const slug = slugify(dto.name)
 		const category = await this.prisma.category.findUnique({
 			where: {
 				id
@@ -75,6 +75,14 @@ export class CategoryService {
 			})
 			if (categoryName)
 				throw new BadRequestException('Category name already exists')
+		}
+
+		let slug = slugify(name)
+
+		if (dto.slug) {
+			slug = slugify(dto.slug)
+
+			if (slug !== dto.slug) throw new BadRequestException('Slug is not valid')
 		}
 
 		if (category.slug !== slug) {
