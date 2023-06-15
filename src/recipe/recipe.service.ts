@@ -118,7 +118,13 @@ export class RecipeService {
 				throw new BadRequestException('Recipe name already exists')
 		}
 
-		const slug = slugify(name)
+		let slug = slugify(name)
+
+		if (dto.slug) {
+			slug = slugify(dto.slug)
+
+			if (slug !== dto.slug) throw new BadRequestException('Slug is not valid')
+		}
 
 		if (recipe.slug !== slug) {
 			const recipeSlug = await this.prisma.recipe.findUnique({

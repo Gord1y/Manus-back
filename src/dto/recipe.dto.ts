@@ -4,6 +4,9 @@ export class IRecipe {
 	@IsString()
 	name: string
 
+	@IsOptional()
+	slug?: string
+
 	@IsString()
 	description: string
 
