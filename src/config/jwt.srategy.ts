@@ -7,11 +7,11 @@ import { PrismaService } from 'src/prisma.service'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(configService: ConfigService, private prisma: PrismaService) {
+	constructor(private prisma: PrismaService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: true,
-			secretOrKey: configService.get('JWT_SECRET')
+			secretOrKey: process.env.JWT_SECRET
 		})
 	}
 	async validate({ id }: Pick<User, 'id'>) {
