@@ -7,7 +7,7 @@ async function bootstrap() {
 	const prismaService = app.get(PrismaService)
 	await prismaService.enableShutdownHooks(app)
 	app.enableCors()
-	app.setGlobalPrefix('/manus/api')
+	app.setGlobalPrefix('/api')
 
 	await app.listen(4000)
 }
